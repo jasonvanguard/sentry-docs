@@ -42,26 +42,39 @@ jobs:
             node-modules-${{ runner.os }}-${{ steps.setup-node.outputs.node-version }}-
 
       # Cache the Next.js build output to avoid rebuilding when docs content changes
+      # Separate caches for docs and dev-docs since they produce different outputs
       - uses: actions/cache@v4
-        id: cache-nextjs
+        id: cache-nextjs-docs
+        if: steps.filter.outputs.docs == 'true'
         with:
           path: |
             ${{ github.workspace }}/.next
-          key: nextjs-build-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('src/**', 'app/**', 'next.config.ts', 'tsconfig.json', 'tailwind.config.mjs') }}
+          key: nextjs-build-docs-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('src/**', 'app/**', 'next.config.ts', 'tsconfig.json', 'tailwind.config.mjs') }}
           restore-keys: |
-            nextjs-build-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}-
-            nextjs-build-${{ runner.os }}-
+            nextjs-build-docs-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}-
+            nextjs-build-docs-${{ runner.os }}-
+
+      - uses: actions/cache@v4
+        id: cache-nextjs-dev-docs
+        if: steps.filter.outputs.dev-docs == 'true'
+        with:
+          path: |
+            ${{ github.workspace }}/.next
+          key: nextjs-build-dev-docs-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('src/**', 'app/**', 'next.config.ts', 'tsconfig.json', 'tailwind.config.mjs') }}
+          restore-keys: |
+            nextjs-build-dev-docs-${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}-
+            nextjs-build-dev-docs-${{ runner.os }}-
 
       - run: yarn install --frozen-lockfile
 
       - run: yarn next build
-        if: steps.filter.outputs.docs == 'true' && steps.cache-nextjs.outputs.cache-hit != 'true'
+        if: steps.filter.outputs.docs == 'true' && steps.cache-nextjs-docs.outputs.cache-hit != 'true'
         env:
           SENTRY_DSN: https://examplePublicKey@o0.ingest.sentry.io/0
           NEXT_PUBLIC_SENTRY_DSN: https://examplePublicKey@o0.ingest.sentry.io/0
 
       - run: yarn build:developer-docs
-        if: steps.filter.outputs.dev-docs == 'true' && steps.cache-nextjs.outputs.cache-hit != 'true'
+        if: steps.filter.outputs.dev-docs == 'true' && steps.cache-nextjs-dev-docs.outputs.cache-hit != 'true'
         env:
           SENTRY_DSN: https://examplePublicKey@o0.ingest.sentry.io/0
           NEXT_PUBLIC_SENTRY_DSN: https://examplePublicKey@o0.ingest.sentry.io/0
