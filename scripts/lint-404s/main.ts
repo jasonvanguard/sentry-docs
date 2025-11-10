@@ -49,7 +49,8 @@ async function deduplicateSlugs(
     let skippedCount = 0;
 
     for (const slug of allSlugs) {
-      const normalizedSlug = slug.replace(/\/$/, '');
+      // Use same normalization as route.ts (remove leading and trailing slashes)
+      const normalizedSlug = slug.replace(/(^\/|\/$)/g, '');
       const sourcePath = sourceMap[normalizedSlug];
 
       // Always check API-generated pages (no source file)

@@ -13,8 +13,8 @@ export async function GET() {
   const sourceMap: Record<string, string | null> = {};
 
   for (const doc of docs) {
-    // Normalize slug (remove trailing slash if present)
-    const slug = doc.slug.replace(/\/$/, '');
+    // Normalize slug (remove leading and trailing slashes to match main.ts trimSlashes)
+    const slug = doc.slug.replace(/(^\/|\/$)/g, '');
     // sourcePath will be null for API-generated pages, which we want to keep
     sourceMap[slug] = doc.sourcePath ?? null;
   }
