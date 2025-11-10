@@ -23,6 +23,8 @@ jobs:
               - 'docs/**'
               - 'includes/**'
               - 'platform-includes/**'
+              - 'scripts/lint-404s/**'
+              - 'app/api/source-map/**'
             dev-docs:
               - 'develop-docs/**'
       - uses: oven-sh/setup-bun@v2
