@@ -10,7 +10,7 @@ import {isDeveloperDocs} from 'sentry-docs/isDeveloperDocs';
  */
 export async function GET() {
   const docs = await (isDeveloperDocs ? getDevDocsFrontMatter() : getDocsFrontMatter());
-  
+
   // For non-developer docs, add API-generated pages (they have undefined sourcePath)
   if (!isDeveloperDocs) {
     const categories = await apiCategories();
@@ -42,4 +42,3 @@ export async function GET() {
 
   return NextResponse.json(sourceMap);
 }
-
