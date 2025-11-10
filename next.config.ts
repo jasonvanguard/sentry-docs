@@ -78,7 +78,6 @@ const outputFileTracingExcludes = process.env.NEXT_PUBLIC_DEVELOPER_DOCS
         'public/og-images/**/*',
       ],
       'sitemap.xml': [
-        'docs/**/*',
         'public/mdx-images/**/*',
         'public/og-images/**/*',
         '**/*.gif',
